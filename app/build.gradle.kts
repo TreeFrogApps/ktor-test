@@ -15,11 +15,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        manifestPlaceholders["pdf_file_provider_authority"] = "com.treefrogapps.pdf.test.provider.pdf"
-        resValue("string", "pdf_file_provider_authority", "com.treefrogapps.pdf.test.provider.pdf")
-        resValue("string", "pdf_files_name", "pdf_files")
-        resValue("string", "pdf_files_path", "pdf_files/")
     }
 
     buildTypes {
