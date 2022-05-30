@@ -113,8 +113,3 @@ private fun createNotification(
         .build()
 
 private fun isEqualOrAboveApi29(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-
-fun HttpResponse.contentLength(): Long =
-    runCatching {
-        headers[HttpHeaders.ContentLength]?.toLongOrNull() ?: 0L
-    }.getOrDefault(defaultValue = 0L)

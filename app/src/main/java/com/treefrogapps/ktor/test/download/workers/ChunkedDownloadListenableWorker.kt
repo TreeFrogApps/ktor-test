@@ -32,21 +32,25 @@ class ChunkedDownloadListenableWorker(
 
         return runCatching {
             client.prepareGet(urlString = url).execute { response ->
-                val length = response.contentLength().toFloat()
+                val length = response.contentLength()?.toFloat() ?: 0F
                 var readBytes = 0
+                var progress = 0
                 val channel: ByteReadChannel = response.body()
                 while (!channel.isClosedForRead) {
-                    val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
+                    val packet = channel.readRemaining(limit = DEFAULT_BUFFER_SIZE.toLong())
                     while (packet.isNotEmpty) {
                         val bytes: ByteArray = packet.readBytes()
                         outputFile.appendBytes(array = bytes)
                         readBytes += bytes.size
-                        val progress = (readBytes * 100F / length).roundToInt()
-                        val progressData = progressData(
-                            urlString = url,
-                            outputFilename = outputFile.name,
-                            progress = progress)
-                        setProgress(progressData)
+                        val currentProgress = (readBytes * 100F / length).roundToInt()
+                        if(currentProgress != progress) {
+                            progress = currentProgress
+                            val progressData = progressData(
+                                urlString = url,
+                                outputFilename = outputFile.name,
+                                progress = progress)
+                            setProgress(progressData)
+                        }
                     }
                 }
             }
